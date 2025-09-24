@@ -1,0 +1,39 @@
+@import "assets/styles/theme";
+/* Layout global */
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.brand { font-weight: 700; letter-spacing: .2px; margin-left: .25rem; }
+.spacer { flex: 1; }
+
+.app-container {
+  max-width: 1120px;       /* ancho centrado */
+  margin-inline: auto;     /* centra horizontalmente */
+  padding: 1.25rem;        /* respiración */
+}
+
+@media (max-width: 640px) {
+  .app-container { padding: .75rem; }
+}
+
+/* (Opcional) fondo general y tipografía si aún no lo tenías */
+:root { --card-bg: #fff; --shadow: 0 2px 12px rgba(0,0,0,.08); }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: #f6f7fb; }
+
+/* Contenedor utilitario (si quieres usarlo también dentro de páginas) */
+.container { max-width: 1120px; margin-inline: auto; padding: 1rem; }
+
+/* Tarjetas generales */
+.card { background: var(--card-bg); border-radius: 16px; box-shadow: var(--shadow); padding: 1.25rem; }
+/* Focus visible accesible para todo */
+:focus-visible {
+  outline: 3px solid #ff6a00; /* color de marca */
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+ 

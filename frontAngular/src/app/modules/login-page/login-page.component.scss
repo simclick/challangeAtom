@@ -1,0 +1,195 @@
+:host {
+    display: block;
+  }
+  /* === THEME: LIGHT ======================================================= */
+
+.auth.auth--light {
+    /* Espaciado y centrado */
+    min-height: calc(80vh - 56px);
+    display: grid;
+    place-items: center;
+    padding: clamp(16px, 4vw, 32px);
+  
+    /* Fondo claro con acentos MUY suaves */
+    background:
+    
+      linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
+  }
+  
+  /* Tarjeta clara con borde sutil */
+  .auth--light .auth__card {
+    width: min(480px, 100%);
+    padding: clamp(24px, 4vw, 32px);
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid #e5e7eb;              /* borde sutil */
+    box-shadow:
+      0 10px 22px rgba(16,24,40,.06),
+      0 4px  8px rgba(16,24,40,.04);
+  }
+  
+  /* Títulos y textos */
+  .auth--light .auth__card-header h2 { color: #0f172a; }
+  .auth--light .auth__card-header p  { color: #64748b; }
+  
+  /* Campos Material en blanco */
+  .auth--light ::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field--filled {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 1px #e5e7eb;
+  }
+  .auth--light ::ng-deep .mdc-text-field--filled .mdc-line-ripple::after {
+    border-bottom-color: #ff6a00; /* acento de marca */
+  }
+  .auth--light ::ng-deep .mat-mdc-form-field-subscript-wrapper { color: #94a3b8; }
+  
+  /* Botón primario naranja (accesible sobre fondo claro) */
+  .auth--light .auth__submit {
+    height: 44px;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    background: linear-gradient(90deg, #ff6a00, #ff8c1a);
+    color: #fff !important;
+    box-shadow: 0 8px 16px rgba(255,106,0,.20);
+  }
+  .auth--light .auth__submit:hover { filter: brightness(1.05); }
+  .auth--light .auth__submit[disabled] {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    box-shadow: none;
+  }
+  
+  /* Pie */
+  .auth--light .auth__meta small { color: #94a3b8; }
+  .auth--light .auth__meta a {
+    color: #ff6a00; text-decoration: none;
+  }
+  .auth--light .auth__meta a:hover { text-decoration: underline; }
+  
+  /* Lienzo */
+  .auth {
+    min-height: calc(100vh - 56px); // ajusta si tu header mide distinto
+    display: grid;
+    place-items: center;
+    padding: clamp(16px, 4vw, 32px);
+  
+    /* Fondo sutil con acentos de marca */
+    background:
+      radial-gradient(50% 50% at 25% 15%, rgba(255,106,0,.08) 0 60%, transparent 60%),
+      radial-gradient(40% 40% at 80% -10%, rgba(0,122,255,.07) 0 55%, transparent 55%),
+      #f7f8fb;
+  }
+  
+  /* Tarjeta */
+  .auth__card {
+    width: min(480px, 100%);
+    padding: clamp(24px, 4vw, 32px);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow:
+      0 10px 25px rgba(16,24,40,.08),
+      0 4px 8px rgba(16,24,40,.06);
+    animation: rise .5s ease both;
+  }
+  
+  @keyframes rise {
+    from { translate: 0 8px; opacity: 0; }
+    to   { translate: 0 0;  opacity: 1; }
+  }
+  
+  /* Encabezado */
+  .auth__card-header {
+    margin-bottom: 12px;
+  
+    h2 {
+      margin: 0 0 4px;
+      font-size: clamp(22px, 2.4vw, 28px);
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+  
+    p {
+      margin: 0;
+      color: #64748b;
+    }
+  }
+  
+  /* Formulario */
+  .auth__form {
+    display: grid;
+    gap: 16px;
+  }
+  
+  .w-100 { width: 100%; }
+  
+  /* ---- TWEAKS Angular Material ---- */
+  ::ng-deep .mat-mdc-form-field {
+    width: 100%;
+  }
+  
+  ::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field--filled {
+    background: #f8fafc;
+    border-radius: 12px;
+  }
+  
+  ::ng-deep .mdc-text-field--filled .mdc-line-ripple::after {
+    border-bottom-color: #ff6a00; // acento de marca
+  }
+  
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    padding: 0 12px;
+  }
+  
+  /* Botón */
+  .auth__submit {
+    height: 44px;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    background: linear-gradient(90deg, #ff6a00, #ff8c1a);
+    color: #fff !important;
+    box-shadow: 0 8px 16px rgba(255,106,0,.22);
+    display: inline-grid;
+    place-items: center;
+  }
+  
+  .auth__submit:hover { filter: brightness(1.05); }
+  .auth__submit[disabled] {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    box-shadow: none;
+  }
+  
+  .btn-spinner {
+    margin-inline: auto;
+  }
+  
+  /* Pie */
+  .auth__meta {
+    margin-top: 8px;
+    text-align: center;
+  
+    small { color: #94a3b8; }
+    a { color: #ff6a00; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  }
+  
+  /* Dark mode opcional */
+  @media (prefers-color-scheme: dark) {
+    .auth {
+      background:
+        radial-gradient(50% 50% at 25% 15%, rgba(255,106,0,.12) 0 60%, transparent 60%),
+        radial-gradient(40% 40% at 80% -10%, rgba(99,102,241,.12) 0 55%, transparent 55%),
+        #0f1117;
+    }
+    .auth__card {
+      background: #0b1220;
+      color: #e2e8f0;
+      box-shadow: 0 10px 28px rgba(0,0,0,.5);
+    }
+    .auth__card-header p { color: #9aa4b2; }
+    ::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field--filled { background: #0f172a; }
+    ::ng-deep .mdc-text-field--filled .mdc-line-ripple::after { border-bottom-color: #ff8c1a; }
+  }
+  

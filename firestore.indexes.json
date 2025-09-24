@@ -1,0 +1,14 @@
+{
+    "indexes": [
+      {
+        "collectionGroup": "tasks",
+        "queryScope": "COLLECTION",
+        "fields": [
+          { "fieldPath": "userEmail", "order": "ASCENDING" },
+          { "fieldPath": "createdAt", "order": "DESCENDING" }
+        ]
+      }
+    ],
+    "fieldOverrides": []
+  }
+  

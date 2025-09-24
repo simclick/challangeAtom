@@ -1,0 +1,133 @@
+name: CI/CD Firebase (Hosting + Functions)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------- FRONT ----------
+  front-build-test:
+    name: Front (Angular) — build & test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontAngular
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontAngular/package-lock.json
+      - run: npm ci
+      - run: npm test -- --runInBand
+      - run: npm run build -- --configuration=production
+      - uses: actions/upload-artifact@v4
+        with:
+          name: front-dist
+          path: frontAngular/dist
+
+  # ---------- BACK (UNIT) ----------
+  back-test:
+    name: Back (unit)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npm run test:unit
+
+# ---------- DEPLOY ----------
+  deploy:
+    name: Deploy Hosting + Functions + Rules
+    needs: [front-build-test, back-test]
+    runs-on: ubuntu-latest
+    # Define las variables de entorno para usar el proyecto correcto
+    env:
+      GCLOUD_PROJECT: atomchallenge-c198f
+      CLOUDSDK_CORE_PROJECT: atomchallenge-c198f
+    steps:
+      - uses: actions/checkout@v4
+
+      # CORRECTED: Downloads the artifact's content to the correct folder
+      - uses: actions/download-artifact@v4
+        with:
+          name: front-dist
+          path: frontAngular/dist
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm i -g firebase-tools
+
+      # Instala las dependencias de las Cloud Functions
+      - name: Install Functions dependencies
+        run: npm ci
+        working-directory: ./backend
+
+      # Construye las funciones, si es necesario (ej. TypeScript)
+      - name: Build Functions
+        run: npm run build --prefix backend
+
+      - name: Autenticación con Google Cloud
+        id: auth # Le damos un ID a este paso para usar sus resultados
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+          # También especificamos aquí el ID del proyecto
+          project_id: 'atomchallenge-c198f'
+
+      # Sube/actualiza secrets de Cloud Functions (solo si existen)
+      - name: Set Functions Secrets
+        env:
+          S_TASKS_API_KEYS: ${{ secrets.TASKS_API_KEYS }}
+          S_CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
+        shell: bash
+        run: |
+          set -e
+          # Usamos el project_id que nos da el paso de autenticación
+          PROJECT_ID_FROM_AUTH="${{ steps.auth.outputs.project_id }}"
+          if [ -n "$S_TASKS_API_KEYS" ]; then
+            echo -n "$S_TASKS_API_KEYS" | firebase functions:secrets:set TASKS_API_KEYS --project "$PROJECT_ID_FROM_AUTH" --data-file=-
+          fi
+          if [ -n "$S_CORS_ORIGINS" ]; then
+            echo -n "$S_CORS_ORIGINS" | firebase functions:secrets:set CORS_ORIGINS --project "$PROJECT_ID_FROM_AUTH" --data-file=-
+          fi
+
+      # Resuelve el siteId de Hosting
+      - name: Resolve Hosting site
+        id: resolve
+        shell: bash
+        env:
+          HOSTING_SITE: ${{ secrets.HOSTING_SITE }}
+        run: |
+          set -e
+          # Usamos el project_id correcto
+          PROJECT_ID_FROM_AUTH="atomchallenge-c198f"
+          # Asignamos el site_id directamente
+          SITE="$PROJECT_ID_FROM_AUTH"
+          # Usamos el proyecto
+          firebase use "$PROJECT_ID_FROM_AUTH" --non-interactive
+          echo "site=$SITE" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to Firebase (Hosting + Functions + Rules)
+        run: |
+          firebase deploy \
+            --only hosting:${{ steps.resolve.outputs.site }},functions,firestore:rules,firestore:indexes \
+            --project "${{ steps.auth.outputs.project_id }}" --non-interactive
